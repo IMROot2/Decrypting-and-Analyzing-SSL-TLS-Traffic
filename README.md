@@ -61,3 +61,21 @@ By examining the "Follow TCP Stream" window, we gain insight into the raw data t
 * **Plaintext Handshake Data:** The readable blue text clearly exposes the details of the server's X.509 Digital Certificate. We can identify the Issuer/Subject details such as `Snake Oil, Ltd`, `Certificate Authority`, and `www.snakeoil.dom`. This data is visible in plain text because the server sends its certificate *before* the symmetric encryption keys are established during the TLS handshake.
 * **Encrypted Payload:** The majority of the stream appears as garbled, unreadable characters (e.g., dots and random symbols). This represents the actual Application Data (the HTTP traffic) which was encrypted over the network. 
 * **Conclusion:** This view proves that while the network packet capture contains the encrypted ciphertext, simply following the raw TCP stream is insufficient to read the payload. To view the readable HTTP data, one must rely on the packet details pane (as shown in the previous step) or use the "Follow TLS Stream" / "Follow HTTP Stream" features when the private key is actively applied.
+### Steps to View the Decrypted HTTP Stream
+
+1. Right-click on a decrypted packet (e.g., Packet 11) in the packet list.
+2. From the context menu, select **"Follow"** > **"HTTP Stream"** (or "TLS Stream", depending on your Wireshark version).
+3. A new window will open displaying the fully decrypted application-layer conversation.
+
+## Decrypted HTTP Stream Analysis
+
+![Wireshark Follow HTTP Stream](Screenshot%202026-07-23%20160439.png)
+
+### Observation and Analysis
+By examining the "Follow HTTP Stream" window, we can observe the ultimate result of our SSL/TLS decryption configuration. Unlike the TCP stream which showed garbled ciphertext, this view presents the communication in complete, readable plain text:
+
+* **Cleartext Recovery:** The successful decryption allows us to view the underlying HTTP protocol exactly as it was transmitted before encryption.
+* **Client Request (Red Text):** The client sends a standard `GET / HTTP/1.1` request. We can easily read the HTTP headers, such as the `Host: localhost` and the `User-Agent` indicating the request was made using a Mozilla Firefox browser on Linux.
+* **Server Response (Blue Text):** The server responds with a `HTTP/1.1 200 OK` status code. The headers reveal the server's identity (`Apache/2.0.55 (Debian)`).
+* **HTML Payload:** Following the response headers, the actual HTML code of the requested web page is fully visible. We can see it is a default Debian Apache placeholder page (`<TITLE>Placeholder page</TITLE>`). 
+* **Conclusion:** This successfully demonstrates how possessing the server's private RSA key allows an analyst or incident responder to decrypt, reconstruct, and inspect secure TLS traffic for analysis or troubleshooting purposes.
