@@ -44,3 +44,20 @@ By examining the detailed view of Packet 11, we can observe the following result
 * **Connection Details:** The packet is sent from the client (Source Port `38713`) to the server (Destination Port `443`) over the local interface (`127.0.0.1`).
 * **SSLv3 Record Layer:** The payload is identified as **Application Data (23)** running under SSL version 3.0. 
 * **Successful Decryption Verification:** The most critical observation in this capture is the presence of the `[Application Data Protocol: Hypertext Transfer Protocol]` tag, alongside the dedicated **Hypertext Transfer Protocol** tree at the bottom. This proves that Wireshark successfully used the provided private key to decrypt the ciphertext (shown in the "Encrypted Application Data" string) and successfully exposed the underlying plain-text HTTP communication.
+### Steps to Follow the TCP Stream
+
+1. Right-click on any packet belonging to the SSL/TLS session in the main packet list.
+2. From the context menu, select **"Follow"** > **"TCP Stream"**.
+3. A new window will open displaying the raw data exchanged during the entire TCP conversation between the client and the server.
+
+## TCP Stream Analysis (Raw Data)
+
+![Wireshark Follow TCP Stream](Screenshot%202026-07-23%20155833.png)
+
+### Observation and Analysis
+By examining the "Follow TCP Stream" window, we gain insight into the raw data transmitted over the wire before the application-layer decryption is fully applied to the stream view. Key observations include:
+
+* **Traffic Direction:** The stream uses color-coding to indicate direction. The red text represents data sent from the client to the server, while the blue text represents data sent from the server back to the client.
+* **Plaintext Handshake Data:** The readable blue text clearly exposes the details of the server's X.509 Digital Certificate. We can identify the Issuer/Subject details such as `Snake Oil, Ltd`, `Certificate Authority`, and `www.snakeoil.dom`. This data is visible in plain text because the server sends its certificate *before* the symmetric encryption keys are established during the TLS handshake.
+* **Encrypted Payload:** The majority of the stream appears as garbled, unreadable characters (e.g., dots and random symbols). This represents the actual Application Data (the HTTP traffic) which was encrypted over the network. 
+* **Conclusion:** This view proves that while the network packet capture contains the encrypted ciphertext, simply following the raw TCP stream is insufficient to read the payload. To view the readable HTTP data, one must rely on the packet details pane (as shown in the previous step) or use the "Follow TLS Stream" / "Follow HTTP Stream" features when the private key is actively applied.
