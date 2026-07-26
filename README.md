@@ -79,3 +79,14 @@ By examining the "Follow HTTP Stream" window, we can observe the ultimate result
 * **Server Response (Blue Text):** The server responds with a `HTTP/1.1 200 OK` status code. The headers reveal the server's identity (`Apache/2.0.55 (Debian)`).
 * **HTML Payload:** Following the response headers, the actual HTML code of the requested web page is fully visible. We can see it is a default Debian Apache placeholder page (`<TITLE>Placeholder page</TITLE>`). 
 * **Conclusion:** This successfully demonstrates how possessing the server's private RSA key allows an analyst or incident responder to decrypt, reconstruct, and inspect secure TLS traffic for analysis or troubleshooting purposes.
+* ## Conclusion
+
+This project successfully demonstrates the fundamental process of intercepting and decrypting SSL/TLS network traffic. By utilizing Wireshark and a known private RSA key, we transitioned from analyzing raw, encrypted ciphertext to fully reconstructing the readable HTTP application-layer stream. 
+
+**Key Takeaways:**
+* Successfully navigated and analyzed `.pcap` files using Wireshark.
+* Understood the phases of the TCP 3-way handshake and the SSL/TLS secure session establishment.
+* Demonstrated how possessing the server's private key allows for the decryption of payload data.
+* Highlighted the difference between raw TCP streams and decrypted Application Data streams.
+
+This hands-on analysis serves as a practical foundation for network troubleshooting, deep packet inspection, and incident response investigations.
